@@ -145,7 +145,11 @@ async def spotify_action_selection(update: Update, context: ContextTypes.DEFAULT
 
 def get_video_info_and_thumbnail(url):
     try:
-        with yt_dlp.YoutubeDL({"quiet": True, "skip_download": True}) as ydl:
+        ydl_opts = {"quiet": True, "skip_download": True}
+        if os.path.exists("cookies.txt"):
+            ydl_opts["cookiefile"] = "cookies.txt"
+
+        with yt_dlp.YoutubeDL(ydl_opts) as ydl:
             info = ydl.extract_info(url, download=False)
 
         title = info.get("title", "N/A")
@@ -181,6 +185,8 @@ def download_media(url, mode="video"):
             "outtmpl": os.path.join("Downloads", "%(title)s.%(ext)s"),
             "format": "bestaudio/best" if mode == "audio" else "bestvideo+bestaudio/best",
         }
+        if os.path.exists("cookies.txt"):
+            opts["cookiefile"] = "cookies.txt"
         if mode == "audio":
             opts["postprocessors"] = [
                 {
@@ -214,8 +220,12 @@ def download_spotify_song(url: str, user_id: int) -> str | None:
         os.makedirs(base_folder, exist_ok=True)
 
         # Run spotdl command
+        cmd = ["spotdl", url, "--output", base_folder]
+        if os.path.exists("cookies.txt"):
+            cmd.extend(["--cookie-file", "cookies.txt"])
+
         result = subprocess.run(
-            ["spotdl", url, "--output", base_folder],
+            cmd,
             capture_output=True,
             text=True,
         )
