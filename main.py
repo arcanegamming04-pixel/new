@@ -21,6 +21,9 @@ from telegram.constants import ParseMode
 # Bot Token (secure): read from environment variable `TOKEN`
 # Read TOKEN from environment for secure deployments
 TOKEN = os.getenv("TOKEN")
+if TOKEN:
+    TOKEN = TOKEN.strip()  # Remove any whitespace/newlines
+
 
 # Logging
 logging.basicConfig(level=logging.INFO)
