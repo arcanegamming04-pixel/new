@@ -1,0 +1,6 @@
+python-telegram-bot>=20.0
+yt-dlp
+spotdl
+# Note: this project also relies on system-level ffmpeg for audio extraction.
+# If you deploy using Railway's default build, you may need to use a Dockerfile
+# to install ffmpeg (see railway/README.md for guidance).
